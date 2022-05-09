@@ -1,8 +1,29 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-a {
-  color: #00B7FF;
+body {
+  background-color: lightsalmon;
+}
+
+header {
+  height: 10vh;
+  background-color: lightblue;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+main {
+  height: 75vh;
+  overflow: auto;
+  padding: 50px;
+}
+
+footer {
+  height: 15vh;
+  background-color: lightgrey;
 }

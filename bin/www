@@ -7,6 +7,8 @@
 var app = require('../app');
 var debug = require('debug')('socrateschat:server');
 var http = require('http');
+// Para poder guardar ficheros con el log de las conversaciones
+const fs = require('fs/promises');
 
 /**
  * Get port from environment and store in Express.
@@ -27,7 +29,31 @@ var server = http.createServer(app);
 const io = require('socket.io')(server);
 
 io.on('connection', (socket) => {
-  console.log('Se ha conectado un nuevo cliente');
+  console.log('Se ha conectado una nueva persona');
+
+  // Informa de que se ha conectado una nueva persona al resto de conectadas
+  socket.broadcast.emit('mensaje_chat', {
+    nombre: 'INFO',
+    mensaje: 'Se ha conectado una nueva persona'
+  })
+
+  // Informamos sobre las personas conectadas con un evento
+  io.emit('num_clientes', io.engine.clientsCount);
+
+  // Suscripción a los eventos
+  socket.on('mensaje_chat', async (data) => {
+    // Guardamos en un fichero el log del chat
+    await fs.appendFile('./mensajes.log', `Nombre: ${data.nombre}\nMensaje: ${data.mensaje}\n\n`);
+    io.emit('mensaje_chat', data)
+  })
+
+  socket.on('disconnect', () => {
+    io.emit('num_clientes', io.engine.clientsCount);
+    io.emit('mensaje_chat', {
+      nombre: 'INFO',
+      mensaje: 'Se ha desconectado una nueva persona'
+    })
+  });
 });
 
 /**

@@ -1,5 +1,64 @@
-<h1>{{title}}</h1>
-<p>Welcome to {{title}}</p>
+<div class="row justify-content-center">
+  <header class="col-12">
+    <h1 class="pt-2">Sócrates Chat</h1>
+    <h5>Personas conectadas: <span id="clientes"></span></h5>
+  </header>
+  <main class="col-10">
+    <ul id="ulMensajes">
+      {{!-- <li>
+        <strong>Chetao_98:</strong> ey, bro. Has visto la última de Spiderman?
+      </li>
+      <li>
+        <strong>Chetao_98:</strong> ey, bro. Has visto la última de Spiderman?
+      </li>
+      <li>
+        <strong>Chetao_98:</strong> ey, bro. Has visto la última de Spiderman?
+      </li> --}}
+    </ul>
+  </main>
+  <div class="col-12">
+    <footer class="row align-items-center justify-content-center">
+      <div class="form-group col-3">
+        <input id="inputNombre" class="form-control" type="text" placeholder="Nombre">
+      </div>
+      <div class="form-group col-6">
+        <textarea id="inputMensaje" class="form-control" type="text" placeholder="Mensaje"></textarea>
+      </div>
+      <div class="form-group col-1">
+        <button class="btn btn-secondary btn-xl" id="btnEnviar">Enviar</button>
+      </div>
+    </footer>
+  </div>
+</div>
+
 <script>
   const socket = io();
+
+  const inputNombre = document.getElementById('inputNombre');
+  const inputMensaje = document.getElementById('inputMensaje');
+  const btnEnviar = document.getElementById('btnEnviar');
+  const ulMensajes = document.getElementById('ulMensajes');
+  const spanClientes = document.getElementById('clientes');
+
+  btnEnviar.addEventListener('click', (event) => {
+    const data = {
+      nombre: inputNombre.value,
+      mensaje: inputMensaje.value
+    }
+    socket.emit('mensaje_chat', data);
+  });
+
+  // Suscripción al evento mensaje_chat
+  socket.on('mensaje_chat', (data) => {
+    console.log(data);
+    const li = document.createElement('li');
+    li.innerHTML = `<strong>${data.nombre}:</strong> ${data.mensaje}`;
+    ulMensajes.appendChild(li);
+  });
+
+  // Suscripción al evento num_clientes (de www)
+  socket.on('num_clientes', (num) => {
+    spanClientes.innerHTML = num;
+  });
+
 </script>
